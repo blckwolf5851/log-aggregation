@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/Shopify/sarama"
 	"github.com/gofiber/fiber/v2"
@@ -38,6 +39,8 @@ func ConnectProducer(brokersUrl []string) (sarama.SyncProducer, error) {
 	config.Producer.RequiredAcks = sarama.WaitForAll
 	config.Producer.Retry.Max = 5
 
+	sarama.Logger = log.New(os.Stdout, "[sarama] ", log.LstdFlags)
+
 	// NewSyncProducer creates a new SyncProducer using the given broker addresses and configuration
 	conn, err := sarama.NewSyncProducer(brokersUrl, config)
 	if err != nil {
@@ -53,7 +56,7 @@ Push <message> to a topic <topic>
 func PushLogToQueue(topic string, message []byte) error {
 
 	// connect to producer
-	brokersUrl := []string{"localhost:9092"}
+	brokersUrl := []string{"127.0.0.1:9092"}
 	producer, err := ConnectProducer(brokersUrl)
 	if err != nil {
 		return err
