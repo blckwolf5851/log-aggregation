@@ -12,9 +12,10 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-// Comment struct
-type Comment struct {
-	Text string `form:"text" json:"text"`
+// Comment struct, TODO: possibly add field type, timestamp
+type Log struct {
+	Level   string `form:"text" json:"level"`
+	Message string `form:"text" json:"message"`
 }
 
 func main() {
@@ -22,7 +23,7 @@ func main() {
 	app := fiber.New()
 	api := app.Group("/api/v1") // /api
 
-	api.Post("/comments", createComment)
+	api.Post("/logs", createLog)
 
 	app.Listen(":3000")
 
@@ -49,7 +50,7 @@ func ConnectProducer(brokersUrl []string) (sarama.SyncProducer, error) {
 /*
 Push <message> to a topic <topic>
 */
-func PushCommentToQueue(topic string, message []byte) error {
+func PushLogToQueue(topic string, message []byte) error {
 
 	// connect to producer
 	brokersUrl := []string{"localhost:9092"}
@@ -79,12 +80,12 @@ func PushCommentToQueue(topic string, message []byte) error {
 
 // createComment handler
 // receive msg via REST and create the message for kafka consumer to consume
-func createComment(c *fiber.Ctx) error {
+func createLog(c *fiber.Ctx) error {
 
 	// Instantiate new struct
-	cmt := new(Comment)
+	cmt := new(Log)
 
-	//  Parse body into comment struct
+	//  Parse body into Logs struct
 	if err := c.BodyParser(cmt); err != nil {
 		log.Println(err)
 		c.Status(400).JSON(&fiber.Map{
@@ -95,9 +96,9 @@ func createComment(c *fiber.Ctx) error {
 	}
 	// convert body into bytes and send it to kafka
 	cmtInBytes, err := json.Marshal(cmt)
-	PushCommentToQueue("comments", cmtInBytes)
+	PushLogToQueue("logs", cmtInBytes)
 
-	// Return Comment in JSON format
+	// Return Log in JSON format
 	err = c.JSON(&fiber.Map{
 		"success": true,
 		"message": "Log pushed successfully",
