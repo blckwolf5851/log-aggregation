@@ -6,6 +6,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"os/signal"
 	"syscall"
@@ -15,16 +16,20 @@ import (
 
 func main() {
 
+	fmt.Println("Connect Consumer...")
 	topic := "logs"
-	worker, err := connectConsumer([]string{"localhost:9092"})
+	worker, err := connectConsumer([]string{"127.0.0.1:9092"})
 	if err != nil {
+		fmt.Println("connectConsumer Error")
 		panic(err)
 	}
 
 	// Calling ConsumePartition. It will open one connection per broker
 	// and share it for all partitions that live on it.
 	consumer, err := worker.ConsumePartition(topic, 0, sarama.OffsetOldest)
+
 	if err != nil {
+		fmt.Println("ConsumePartition Error")
 		panic(err)
 	}
 	fmt.Println("Consumer started ")
@@ -42,6 +47,8 @@ func main() {
 				fmt.Println(err)
 			case msg := <-consumer.Messages():
 				msgCount++
+				// write code to process message and persist to db
+				// cache count so that don't process the ones that were already processed.
 				fmt.Printf("Received message Count %d: | Topic(%s) | Message(%s) \n", msgCount, string(msg.Topic), string(msg.Value))
 			case <-sigchan:
 				fmt.Println("Interrupt is detected")
@@ -63,7 +70,10 @@ func connectConsumer(brokersUrl []string) (sarama.Consumer, error) {
 	config := sarama.NewConfig()
 	config.Consumer.Return.Errors = true
 
-	// Create new consumer
+	sarama.Logger = log.New(os.Stdout, "[sarama] ", log.LstdFlags)
+	config.Consumer.Offsets.Initial = sarama.OffsetOldest
+
+	// NewConsumer creates a new consumer using the given broker addresses and configuration
 	conn, err := sarama.NewConsumer(brokersUrl, config)
 	if err != nil {
 		return nil, err

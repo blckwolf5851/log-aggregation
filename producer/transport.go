@@ -39,6 +39,8 @@ func ConnectProducer(brokersUrl []string) (sarama.SyncProducer, error) {
 	config.Producer.RequiredAcks = sarama.WaitForAll
 	config.Producer.Retry.Max = 5
 
+	// TODO: use manual partitioner to separate consumer with partition
+
 	sarama.Logger = log.New(os.Stdout, "[sarama] ", log.LstdFlags)
 
 	// NewSyncProducer creates a new SyncProducer using the given broker addresses and configuration
