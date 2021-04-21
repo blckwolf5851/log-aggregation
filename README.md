@@ -34,6 +34,11 @@ sysctl -w vm.max_map_count=262144
 exit
 ```
 
+### To Access docker backend files
+```
+docker run -it --privileged --pid=host debian nsenter -t 1 -m -u -i sh
+```
+
 ## Commands
 
 ### Send data to producer
