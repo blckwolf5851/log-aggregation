@@ -42,10 +42,6 @@ type kafkaError struct {
 	message string
 }
 
-func (e *kafkaError) Error() string {
-	return fmt.Sprintf("%s - %s", e.target, e.message)
-}
-
 // DefaultInputConfig returns an InputConfig struct with default values
 func DefaultInputConfig() InputConfig {
 	return InputConfig{

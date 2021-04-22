@@ -368,7 +368,7 @@ class KafkaLoggingHandler(logging.Handler):
         logging.Handler.close(self)
 
 SERVICE_NAME = "http://log-aggregation.com" # Kafka will be keyed by this
-# SERVICE_NAME = "http://log-aggregation2.com" # Kafka will be keyed by this
+SERVICE_NAME = "http://log-aggregation2.com" # Kafka will be keyed by this
 KAFKA_BOOTSTRAP_SERVER = ('localhost:9092') # Kafka server
 TEAM_ID = "Eventarc"
 TOPIC = TEAM_ID
@@ -385,4 +385,5 @@ logger.addHandler(kafka_handler_obj)
 # Set logging level
 logger.setLevel(logging.DEBUG)
 
-logger.info('Happy Logging!')
+# logger.info('Happy Logging2!')
+logger.error('Happy Logging2!')
