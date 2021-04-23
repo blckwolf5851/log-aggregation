@@ -92,7 +92,7 @@ class KafkaLoggingHandler(logging.Handler):
         logging.Handler.__init__(self)
         self.enabled = False
 
-        self.key = json.dumps(key) # decide which partition to save to
+        self.key = key # decide which partition to save to
 
         try:
             self.kafka_topic_name = topic
@@ -123,6 +123,7 @@ class KafkaLoggingHandler(logging.Handler):
                 try:
                     self.producer = KafkaProducer(
                         bootstrap_servers=hosts_list,
+                        key_serializer=lambda key: json.dumps(key).encode("utf-8"),
                         value_serializer=lambda msg: json.dumps(msg).encode("utf-8"),
                         **kafka_producer_args
                     )
@@ -385,5 +386,8 @@ logger.addHandler(kafka_handler_obj)
 # Set logging level
 logger.setLevel(logging.DEBUG)
 
-# logger.info('Happy Logging2!')
-logger.error('Happy Logging2!')
+string = 'Happy Logging!' + str(datetime.datetime.now())
+logger.info(string)
+# logger.error(string)
+
+print(string)
