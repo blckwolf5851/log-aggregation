@@ -108,18 +108,18 @@ services:
     networks:
       - elastic
   node_api:
-    image: node:10.15.3-alpine
+    image: node:14-alpine
     container_name: nodejs
     build: .
     ports:
       - 3000:3000
-    stdin_open: true
+    # stdin_open: true
     environment:
       - NODE_ENV=local
-      - ES_HOST=localhost
+      - ES_HOST=es01
       - NODE_PORT=3000
-      - ELASTIC_URL=http://localhost:9200
-      - CI=true
+      - ELASTIC_URL=http://es01:9200
+      # - CI=true
     volumes:
       - .:/usr/src/app/quotes
     command: npm run start

@@ -15,7 +15,7 @@ function start() {
     app.use(bodyParser.json());
 
     // TODO Set port for the app to listen on
-    app.set('port', process.env.PORT || 9100);
+    app.set('port', PORT);
 
     // TODO Set path to serve static files
     app.use(express.static(path.join(__dirname, 'public')));

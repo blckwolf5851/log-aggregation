@@ -2,6 +2,7 @@ const { indices } = require('./server.client');
 const client = require('./server.client');
 // const elasticSearchSchema = require('./server.es.schema');
 
+// Request example: http://localhost:3000/search?indices=["httplog-aggregation2com","httplog-aggregationcom"]&&body={"timestamp"":"2021-04-21"}
 
 function ElasticSearchClient(indices, body) {
     // perform the actual search passing in the index, the search query and the type
@@ -17,38 +18,44 @@ function ElasticSearchClient(indices, body) {
     for (var i = 0; i < indices.length; i++) {
         query.push({ index: indices[i] })
         if (Object.keys(body).length != 0) {
-            query.push({ query: { match: { ...body } } })
+            query.push({
+                sort: [
+                    { "timestamp": "desc" }
+                ],
+                query: { match: { ...body } }
+            })
         } else {
-            query.push({})
+            query.push({
+                sort: [
+                    { "timestamp": "desc" }
+                ]
+            })
         }
     }
     console.log(query)
 
-    return client.msearch({
-        body: [
-            { index: 'httplog-aggregationcom' },
-            { },
+    // return client.msearch({
+    //     body: [
+    //         { index: 'httplog-aggregationcom' },
+    //         { },
 
-            { index: 'httplog-aggregation2com' },
-            { }
-        ]
-    })
-    return client.search(query)
+    //         { index: 'httplog-aggregation2com' },
+    //         { }
+    //     ]
+    // })
+    return client.msearch({ body: query })
+    // return client.search(query)
 }
 
 function processEsResponse(r) {
     var result = r.body.responses
-    console.log(result)
     result = result.map((hit) => {
         return hit.hits.hits
     });
-    console.log(result)
     result = [].concat.apply([], result)
-    console.log(result)
     const values = result.map((hit) => {
         return hit._source
     });
-    console.log(result)
     return values
 }
 
@@ -56,6 +63,8 @@ function ApiElasticSearchClient(req, res) {
     // perform the actual search passing in the index, the search query and the type
     var body = req.query.body
     var indices = req.query.indices
+    indices = JSON.parse(indices)
+    body = JSON.parse(body)
     console.log('indices')
     console.log(indices)
     console.log("body")
