@@ -14,7 +14,7 @@ KAFKA_BOOTSTRAP_SERVER = ['localhost:9092']
 
 consumer = KafkaConsumer(
                         bootstrap_servers=KAFKA_BOOTSTRAP_SERVER,
-                        # auto_offset_reset='earliest',
+                        auto_offset_reset='earliest',
                         key_deserializer=lambda key: json.loads(
                             key.decode('utf-8')),
                         value_deserializer=lambda msg: json.loads(
@@ -44,7 +44,7 @@ for msg in consumer:
     if "team" not in msg:
         continue
     index = msg["service"].lower()
-    index = re.sub('["\*\\\\<|>/\?:\.]', '', index)
+    index = re.sub('[^a-z-0-9+]+', '', index)
     print(index)
     # doc_type = msg["service"].lower()
     doc_id = msg["timestamp"].lower()

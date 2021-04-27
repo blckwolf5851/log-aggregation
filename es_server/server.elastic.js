@@ -1,48 +1,50 @@
-const { indices } = require('./server.client');
 const client = require('./server.client');
 // const elasticSearchSchema = require('./server.es.schema');
 
 // Request example: http://localhost:3000/search?indices=["httplog-aggregation2com","httplog-aggregationcom"]&&body={"timestamp"":"2021-04-21"}
 
-function ElasticSearchClient(indices, body) {
+function ElasticSearchClient(indices, body, dateRange) {
     // perform the actual search passing in the index, the search query and the type
-    // const query = {
-    //     index: index,
-    //     // type: '_doc', // uncomment this line if you are using Elasticsearch ≤ 6
-    //     body: {},
-    //     size: 100
-    // }
-    // console.log(query)
-    // const { body: { hits } } = await esclient.search(query);
-    query = []
+
+    /*
+    dateRange = {
+        "timestamp":{
+            "gte":"2020-4-29",
+            "lte":"2021-5-6",
+            "format":"date"
+        }
+    }
+    */
+
+
+    var query = []
+    size = 50
     for (var i = 0; i < indices.length; i++) {
         query.push({ index: indices[i] })
+        var tmp_query = {
+            sort: [
+                { "timestamp": "desc" }
+            ],
+            size: size,
+        };
         if (Object.keys(body).length != 0) {
-            query.push({
-                sort: [
-                    { "timestamp": "desc" }
-                ],
-                query: { match: { ...body } }
-            })
+            tmp_query.query = {
+                bool:{
+                    must:{
+                        match: { ...body }
+                    }
+                }
+            }
+            tmp_query.query.bool.filter={
+                range: { ...dateRange } 
+            }
         } else {
-            query.push({
-                sort: [
-                    { "timestamp": "desc" }
-                ]
-            })
+            tmp_query.query = { range: { ...dateRange } }
         }
+        query.push(tmp_query)
     }
     console.log(query)
 
-    // return client.msearch({
-    //     body: [
-    //         { index: 'httplog-aggregationcom' },
-    //         { },
-
-    //         { index: 'httplog-aggregation2com' },
-    //         { }
-    //     ]
-    // })
     return client.msearch({ body: query })
     // return client.search(query)
 }
@@ -63,13 +65,11 @@ function ApiElasticSearchClient(req, res) {
     // perform the actual search passing in the index, the search query and the type
     var body = req.query.body
     var indices = req.query.indices
+    var dateRange = req.query.dateRange
     indices = JSON.parse(indices)
     body = JSON.parse(body)
-    console.log('indices')
-    console.log(indices)
-    console.log("body")
-    console.log(body)
-    ElasticSearchClient(indices, body)
+    dateRange = JSON.parse(dateRange)
+    ElasticSearchClient(indices, body, dateRange)
         .then(r => res.send(processEsResponse(r)))
         // .then(r => res.send(r.hits.hits))
         .catch(e => {
@@ -78,6 +78,21 @@ function ApiElasticSearchClient(req, res) {
         });
 }
 
+function getAllIndices(req, res) {
+    client.cat.indices({ "format": "json" }, function (err, result) {
+        if (err) {
+            res.send([]);
+        } else {
+            var result = result.body.map((r) => {
+                return r.index
+            })
+            result = result.filter((name) => !name.startsWith("."))
+            console.log("filtered indices: ", result)
+            res.send(result);
+        }
+    })
+
+}
 function checkConnection() {
     return new Promise(async (resolve) => {
 
@@ -105,5 +120,7 @@ function checkConnection() {
 module.exports = {
     ApiElasticSearchClient,
     ElasticSearchClient,
-    checkConnection
+    checkConnection,
+    getAllIndices
 };
+

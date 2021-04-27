@@ -370,7 +370,7 @@ class KafkaLoggingHandler(logging.Handler):
 
 SERVICE_NAME = "http://log-aggregation.com" # Kafka will be keyed by this
 SERVICE_NAME = "http://log-aggregation2.com" # Kafka partition will be keyed by this
-SERVICE_NAME = "http://log-aggregation3.com" # Kafka partition will be keyed by this
+# SERVICE_NAME = "http://log-aggregation3.com" # Kafka partition will be keyed by this
 KAFKA_BOOTSTRAP_SERVER = ('localhost:9092') # Kafka server
 TEAM_ID = "Eventarc"
 TOPIC = TEAM_ID
