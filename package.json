@@ -6,8 +6,8 @@
   "scripts": {
     "start_es": "pm2-runtime start ./es_server/server.js --name es_node_backend",
     "stop_es": "pm2-runtime stop es_node_backend",
-    "start_kaf": "pm2-runtime start ./kaf_server/server.js --name kaf_node_backend",
-    "stop_kaf": "pm2-runtime stop kaf_node_backend"
+    "start_alert": "pm2-runtime start ./alert_service/server.js --name alert_node_backend",
+    "stop_alert": "pm2-runtime stop alert_node_backend"
   },
   "repository": {
     "type": "git",

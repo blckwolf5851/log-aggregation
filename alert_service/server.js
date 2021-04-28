@@ -1,3 +1,5 @@
+// a websocket server for receiving alert, write to elastic search
+
 var WebSocketServer = require('websocket').server;
 var http = require('http');
 
