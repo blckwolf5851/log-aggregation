@@ -16,6 +16,9 @@ var server = http.createServer(function (request, response) {
     response.end();
 });
 
+// TODO: caching solution https://www.npmjs.com/package/node-cache (MAYBE DONT NEED THIS)
+// TODO: long term storage of query state (https://www.npmjs.com/package/node-localstorage)
+
 // TODO subscribe to multiple topic with groupid.
 
 var alerts = {}
@@ -130,6 +133,18 @@ webSocketServer.on('request', function (request) {
                             email: alerts[query_id].email,
                             priority: alerts[query_id].priority,
                             message: "Condition: " + JSON.stringify(alerts[query_id].conditions) + " Exceed " + alerts[query_id].threshold + " Times."
+                        }
+                        const notif = {
+                            eventId:query_id,
+                            subject:"[" + alerts[query_id].priority + "] Logging Alert",
+                            dateCreated: now,
+                            channel:{"EMAIL":true},
+                            recipient:[alerts[query_id].email],
+                            eventType: "Alert",
+                            description: "Condition: " + JSON.stringify(alerts[query_id].conditions) + " Exceed " + alerts[query_id].threshold + " Times.",
+                            UnmappedData:{
+                                priority: alerts[query_id].priority
+                            }
                         }
                         push_messages.push(JSON.stringify(notif))
 
