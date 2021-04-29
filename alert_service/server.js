@@ -5,9 +5,10 @@ var http = require('http');
 
 var kafka = require('kafka-node');
 var Consumer = kafka.Consumer,
-    client = new kafka.KafkaClient("localhost:9092")
-// consumer = new Consumer(
-//     client, [{ topic: 'Eventarc', partition: 0 }], { autoCommit: false });
+    Producer = kafka.Producer,
+    client = new kafka.KafkaClient("localhost:9092"),
+    consumer = new Consumer(client, [{ topic: 'Eventarc', partition: 0 }], { autoCommit: false }),
+    producer = new Producer(client);
 
 var server = http.createServer(function (request, response) {
     console.log(' Request recieved : ' + request.url);
@@ -17,8 +18,20 @@ var server = http.createServer(function (request, response) {
 
 // TODO subscribe to multiple topic with groupid.
 
-var topic2Consumer = {} // keep track of the consumer object
-var topic2Connections = {} // keep track of the websocket clieint connections corresponding to each topic
+var alerts = {}
+
+const sample_alert = {
+    id: '3sfgff4dASE',
+    command: "ADD", // can be ADD, DEL, every alert in <alerts> cannot have command = DEL
+    conditions: {
+        levelname:"ERROR" // field equal value
+    },
+    threshold: 2,
+    window: 6485218, // time window size in millisecond
+    sendTo: '154757929sherry@gmail.com',
+    priority: "HIGH" // LOW, MEDIUM, HIGH
+}
+
 
 server.listen(8080, function () {
     console.log('Listening on port : 8080');
@@ -28,7 +41,6 @@ webSocketServer = new WebSocketServer({
     httpServer: server,
     autoAcceptConnections: false
 });
-
 
 
 function iSOriginAllowed(origin) {
@@ -45,45 +57,27 @@ webSocketServer.on('request', function (request) {
 
     // accept remote connection
     var connection = request.accept('echo-protocol', request.origin);
-    var connectionIndices = {} // topic 2 index mapping, keeping track of index of the clients to remove
+
+    var push_messages = []
 
     console.log('Connection accepted : ' + request.origin);
     connection.on('message', function (message) {
         if (message.type === 'utf8') {
-            var consumerCreationSucceed = true;
-            const topic = message.utf8Data
-            // subscribe to new kafka topic if not subscribed already
-            console.log('Creating kafka topic: ' + topic);
-            if (topic in topic2Consumer) {
-                console.log("Topic \"" + topic + "\" already exist")
-            } else {
-                // create a new kafka consumer if topic valid
-                try {
-                    var new_consumer = new Consumer(
-                        client, [{ topic: topic, partition: 0 }], { autoCommit: false });
-                    topic2Consumer[topic] = new_consumer
-                } catch (err) {
-                    console.log("Failed to create topic: " + err.message)
-                    consumerCreationSucceed = false;
-                }
+            console.log(message)
+            console.log(message.utf8Data)
+            const query = JSON.parse(message.utf8Data);
+            const command = query.command; // can be ADD, DEL
+            if (command === "ADD") {
+                alerts[query.id] = query
+                alerts[query.id].matching_log = [] // keep track of number of match to this query
+            } else if (command === "DEL") {
+                delete alerts[query.id];
+            } else if (command === "UPD") {
+                let matching_log = alerts[query.id].matching_log
+                alerts[query.id] = query
+                alerts[query.id].matching_log = matching_log
             }
-            // let connection subscribe to the kafka topic if have not already, but only if the consumer creation succeeed
-            if (consumerCreationSucceed) {
-                console.log("Adding connection: " + request.origin + " to subscriber list")
-                if (topic in topic2Connections) {
-                    var already_exist = false;
-                    if (topic in connectionIndices) {
-                        console.log("Connection already subscribed to topic")
-                        already_exist = true;
-                    }
-                    if (!already_exist)
-                        topic2Connections[topic].push(connection)
-                    connectionIndices[topic] = topic2Connections[topic].length - 1
-                } else {
-                    topic2Connections[topic] = [connection]
-                    connectionIndices[topic] = 0
-                }
-            }
+            console.log(command + " alert " + query.id);
         } else {
             console.log("Received message is not UTF-8 type")
         }
@@ -91,40 +85,101 @@ webSocketServer.on('request', function (request) {
     });
 
     // loop through the list of consumer and send messages to connections that subscribed to it.
-    for (const [topic, consumer] of Object.entries(topic2Consumer)) {
-        consumer.on('message', function (message) {
-            console.log(message);
-            if (topic in connectionIndices) {
-                // the client is connected to the topic
-                console.log("Sending message from topic: " + topic + " to " + request.origin)
-                connection.sendUTF(message.value);
+    consumer.on('message', function (message) {
+        // parse log into json, and its timestamp into Date
+        console.log(message);
+        const log = JSON.parse(message.value);
+        log.timestamp = new Date(log.timestamp)
+
+        // check match for each query
+        for (const query_id in alerts) {
+            var all_field_match = true;
+            for (const field in alerts[query_id].conditions) {
+                if (log[field] !== alerts[query_id].conditions[field]) {
+                    all_field_match = false;
+                }
             }
+            if (all_field_match) {
+                // increment of match for that query
+                alerts[query_id].matching_log.push(log);
+            }
+            if (alerts[query_id].matching_log.length >= alerts[query_id].threshold) {
+                // check if time difference matches
+                const time_diff = alerts[query_id].matching_log[alerts[query_id].matching_log.length-1].timestamp - alerts[query_id].matching_log[0].timestamp;
+                const now = new Date()
+                if (time_diff < alerts[query_id].window) {
+                    // if the threshold hit within the timeframe, then push alert to kafka
+                    const notif = {
+                        timestamp: now,
+                        email: alerts[query_id].email,
+                        priority: alerts[query_id].priority,
+                        message: "Condition: " + JSON.stringify(alerts[query_id].conditions) + " Exceed " + alerts[query_id].threshold + " Times."
+                    }
+                    // add the message to queue, for push to kafka later
+                    push_messages.push(JSON.stringify(notif))
+                    console.log("Push alert to Kafka: " + JSON.stringify(notif))
+                    alerts[query_id].matching_log = [] // reset to empty to avoid spamming
+                } else {
+                    
+                    alerts[query_id].matching_log = alerts[query_id].matching_log.filter(obj => now - obj.timestamp > alerts[query_id].threshold)
 
-        });
-    }
+                    // check again if the threshold is still hit after filter
+                    if (alerts[query_id].matching_log.length >= alerts[query_id].threshold) {
+                        const notif = {
+                            timestamp: now,
+                            email: alerts[query_id].email,
+                            priority: alerts[query_id].priority,
+                            message: "Condition: " + JSON.stringify(alerts[query_id].conditions) + " Exceed " + alerts[query_id].threshold + " Times."
+                        }
+                        push_messages.push(JSON.stringify(notif))
 
-    // read message from kafka and send it
+                        console.log("Push alert to Kafka: " + JSON.stringify(notif))
+                        alerts[query_id].matching_log = [] // reset to empty to avoid spamming
+                    }
+                }
+            }
+        }
+        if (push_messages.length > 0) {
+            var payloads = [{
+                topic: 'alerts',
+                messages: push_messages, // multi messages should be a array, single message can be just a string or a KeyedMessage instance
+                // key: '', // string or buffer, only needed when using keyed partitioner
+                // partition: 0, // default 0
+                // attributes: 0, // default: 0
+                // timestamp: Date.now() // <-- defaults to Date.now() (only available with kafka v0.10+)
+            }]
+            console.log("Sending " + JSON.stringify(push_messages) + " To Kafka")
+            producer.send(payloads, function (err, data) {
+                console.log(data);
+            });
+            push_messages = []
+        }
 
+    });
+
+    // publish notification to kafka
+    producer.on('ready', function () {
+        if (push_messages.length > 0) {
+            var payloads = [{
+                topic: 'alerts',
+                messages: push_messages, // multi messages should be a array, single message can be just a string or a KeyedMessage instance
+                // key: '', // string or buffer, only needed when using keyed partitioner
+                // partition: 0, // default 0
+                // attributes: 0, // default: 0
+                // timestamp: Date.now() // <-- defaults to Date.now() (only available with kafka v0.10+)
+            }]
+            console.log("Sending " + JSON.stringify(push_messages) + " To Kafka")
+            producer.send(payloads, function (err, data) {
+                console.log(data);
+            });
+            push_messages = []
+        }
+    });
+
+    producer.on('error', function (err) { console.log("Producer Error:" + err) })
 
     // close connection
     connection.on('close', function (reasonCode, description) {
         console.log('Connection ' + request.origin + ' disconnected.');
-        var topic2remove = []
-
-        for (const [topic, index] of Object.entries(connectionIndices)) {
-            // remove the disconnected connection from the subscriber array for each topic
-            topic2Connections[topic].splice(index, 1);
-            if (topic2Connections[topic].length == 0) {
-                console.log("Zero subscriber to topic: " + topic)
-                // when no subscriber for a topic, then remove the consumer and corresponding subscriber lists.
-                topic2remove.push(topic) // avoid deleting while iterating
-            }
-        }
-        // cleanup topics
-        for (var i = 0; i < topic2remove.length; i++) {
-            delete topic2Consumer[topic2remove[i]];
-            delete topic2Connections[topic2remove[i]];
-        }
-        // console.log('Connection ' + connection.remoteAddress + ' disconnected.');
     });
 });
