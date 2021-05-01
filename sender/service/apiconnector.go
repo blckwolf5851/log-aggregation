@@ -3,7 +3,7 @@ package service
 import (
 	"errors"
 
-	"github.com/malike/go-kafka-alert/db"
+	"log-aggregation/sender/db"
 )
 
 // EventForAPI struct

@@ -5,9 +5,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/malike/go-kafka-alert/db"
+	"log-aggregation/sender/db"
 
-	"github.com/malike/go-kafka-alert/config"
+	"log-aggregation/sender/config"
 )
 
 var fakeRecipient = "233201234567"

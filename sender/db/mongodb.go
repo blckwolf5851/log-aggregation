@@ -3,7 +3,8 @@ package db
 import (
 	"time"
 
-	"github.com/malike/go-kafka-alert/config"
+	"log-aggregation/sender/config"
+
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )

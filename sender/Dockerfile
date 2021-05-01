@@ -6,7 +6,7 @@ RUN apk update && apk upgrade && \
 RUN apk add librdkafka-dev build-base
 RUN chmod +x /usr/bin/dep
 
-WORKDIR $GOPATH/src/github.com/malike/go-kafka-alert
+WORKDIR $GOPATH/src/log-aggregation/sender
 COPY Gopkg.toml Gopkg.lock ./
 COPY configuration.json ./
 RUN dep ensure --vendor-only
@@ -16,5 +16,5 @@ RUN GOOS=linux go build -a -o /go-kafka-alert .
 FROM scratch
 COPY --from=builder /go-kafka-alert ./
 COPY --from=builder . ./
-ENTRYPOINT ["./go-kafka-alert"]
+ENTRYPOINT ["./sender"]
 # CMD [ "profile", "config" ]

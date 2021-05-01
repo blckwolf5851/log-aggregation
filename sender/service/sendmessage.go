@@ -3,7 +3,7 @@ package service
 import (
 	"strings"
 
-	"github.com/malike/go-kafka-alert/db"
+	"log-aggregation/sender/db"
 )
 
 //EventForMessage : Interface to be Implemented For Delivery Channels

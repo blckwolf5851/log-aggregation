@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/malike/go-kafka-alert/db"
+	"log-aggregation/sender/db"
 )
 
 var fakeStreamEvent = db.Event{

@@ -4,11 +4,11 @@ import (
 	"bytes"
 	"text/template"
 
-	"github.com/malike/go-kafka-alert/config"
-	"github.com/malike/go-kafka-alert/db"
+	"log-aggregation/sender/config"
+	"log-aggregation/sender/db"
 )
 
-//ParseTemplateForMessage : Parses Template
+//ParseTemplateForMessage : Parses Email/Txt Template
 func ParseTemplateForMessage(event db.Event, channel string) (string, error) {
 	var parse string
 	temp := config.AppConfiguration.Templates[event.EventType+"_"+channel]

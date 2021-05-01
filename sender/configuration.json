@@ -1,12 +1,12 @@
 {
   "workers": 4,
-  "logFileLocation": "/var/log/go_kafka_alert.log",
+  "logFileLocation": "./go_kafka_alert.log",
   "log": true,
   "kafkaConfig": {
     "bootstrapServers": "localhost:9092",
-    "kafkaTopic": "go-kafka-event-stream",
-    "kafkaTopicConfig": "latest",
-    "kafkaGroupId": "consumerGroupOne",
+    "kafkaTopic": "alerts",
+    "kafkaTopicConfig": "earliest",
+    "kafkaGroupId": "notification-service",
     "kafkaTimeout": 50000
   },
   "webhookConfig": {
@@ -23,9 +23,9 @@
     "tls": true,
     "smtpServerPort": 465,
     "emailSender": "Sender",
-    "emailFrom": "youreamail@gmail.com",
-    "emailAuthUserName": "youreamail@gmail.com",
-    "emailAuthPassword": "xxxxxx"
+    "emailFrom": "test.log.aggregation@gmail.com",
+    "emailAuthUserName": "test.log.aggregation@gmail.com",
+    "emailAuthPassword": "Shyu-0929"
   },
   "dbConfig": {
     "mongoHost": "localhost",

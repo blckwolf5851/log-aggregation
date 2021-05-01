@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/malike/go-kafka-alert/config"
+	"log-aggregation/sender/config"
 )
 
 var msg = Message{

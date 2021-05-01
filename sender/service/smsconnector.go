@@ -6,9 +6,9 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/malike/go-kafka-alert/db"
+	"log-aggregation/sender/db"
 
-	"github.com/malike/go-kafka-alert/config"
+	"log-aggregation/sender/config"
 
 	"github.com/sfreiberg/gotwilio"
 )

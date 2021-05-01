@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/malike/go-kafka-alert/config"
-	"github.com/malike/go-kafka-alert/db"
+	"log-aggregation/sender/config"
+	"log-aggregation/sender/db"
 )
 
 var fakeEmailRecipient = "st.malike@gmail.com"

@@ -2,14 +2,17 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"os"
+	"os/signal"
 	"strconv"
+	"syscall"
 
-	"github.com/malike/go-kafka-alert/service"
+	"log-aggregation/sender/service"
 
-	"github.com/malike/go-kafka-alert/db"
+	"log-aggregation/sender/db"
 
-	"github.com/malike/go-kafka-alert/config"
+	"log-aggregation/sender/config"
 )
 
 var profile = ""
@@ -43,41 +46,51 @@ func main() {
 		strconv.Itoa(len(config.AppConfiguration.Templates)) + "' templates and " +
 		strconv.Itoa(config.AppConfiguration.Workers) + " workers processing events")
 
-	service.NewKafkaConsumer()
-	if service.KafkaConsumer == nil {
-		config.Error.Println("Error starting Kafka Consumer ")
-		os.Exit(1)
+	var done = make(chan struct{})
+	defer close(done)
+	_, err := service.StartMultiBatchConsumer(config.AppConfiguration.KafkaConfig.BootstrapServers, config.AppConfiguration.KafkaConfig.KafkaTopic)
+	if err != nil {
+		panic(err)
 	}
+	<-done
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
+	fmt.Println("received signal", <-c)
+	// service.NewKafkaConsumer()
+	// if service.KafkaConsumer == nil {
+	// 	config.Error.Println("Error starting Kafka Consumer ")
+	// 	os.Exit(1)
+	// }
 
-	run := true
-	for run {
-		events, _ := service.GetEventFromKafkaStream()
+	// run := true
+	// for run {
+	// 	events, _ := service.GetEventFromKafkaStream()
 
-		if len(events) > 0 {
+	// 	if len(events) > 0 {
 
-			if len(events) <= config.AppConfiguration.Workers {
-				config.Info.Println("Distributing " + strconv.Itoa(len(events)) + " worker of the month")
-				go service.EventProcessorForChannel(events)
-			} else {
-				batchSize := len(events) / config.AppConfiguration.Workers
-				config.Info.Println("Distributing '" + strconv.Itoa(len(events)) + "' events for '" +
-					strconv.Itoa(config.AppConfiguration.Workers) +
-					"' workers '" + strconv.Itoa(batchSize) + "' each.")
+	// 		if len(events) <= config.AppConfiguration.Workers {
+	// 			config.Info.Println("Distributing " + strconv.Itoa(len(events)) + " worker of the month")
+	// 			go service.EventProcessorForChannel(events)
+	// 		} else {
+	// 			batchSize := len(events) / config.AppConfiguration.Workers
+	// 			config.Info.Println("Distributing '" + strconv.Itoa(len(events)) + "' events for '" +
+	// 				strconv.Itoa(config.AppConfiguration.Workers) +
+	// 				"' workers '" + strconv.Itoa(batchSize) + "' each.")
 
-				//..else share
-				currentPointer := 0
-				var eventBatch []db.Event
-				for i := 1; i <= config.AppConfiguration.Workers; i++ {
-					//slice events ..using batchSize
-					if i == config.AppConfiguration.Workers {
-						eventBatch = events[currentPointer:]
-					} else {
-						eventBatch = events[currentPointer:batchSize]
-					}
-					go service.EventProcessorForChannel(eventBatch)
-					currentPointer = currentPointer + batchSize + 1
-				}
-			}
-		}
-	}
+	// 			//..else share
+	// 			currentPointer := 0
+	// 			var eventBatch []db.Event
+	// 			for i := 1; i <= config.AppConfiguration.Workers; i++ {
+	// 				//slice events ..using batchSize
+	// 				if i == config.AppConfiguration.Workers {
+	// 					eventBatch = events[currentPointer:]
+	// 				} else {
+	// 					eventBatch = events[currentPointer:batchSize]
+	// 				}
+	// 				go service.EventProcessorForChannel(eventBatch)
+	// 				currentPointer = currentPointer + batchSize + 1
+	// 			}
+	// 		}
+	// 	}
+	// }
 }

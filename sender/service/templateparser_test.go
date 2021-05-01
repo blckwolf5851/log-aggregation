@@ -3,7 +3,7 @@ package service
 import (
 	"testing"
 
-	"github.com/malike/go-kafka-alert/db"
+	"log-aggregation/sender/db"
 )
 
 var fakeTempEvent = db.Event{

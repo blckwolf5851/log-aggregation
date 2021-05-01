@@ -1,0 +1,2 @@
+ERROR: 2021/04/30 22:41:48 emailconnector.go:55: Email address not valid ['']
+ERROR: 2021/04/30 22:45:42 emailconnector.go:55: Email address not valid ['']
