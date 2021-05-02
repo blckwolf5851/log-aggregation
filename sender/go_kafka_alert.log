@@ -1,2 +1,28 @@
 ERROR: 2021/04/30 22:41:48 emailconnector.go:55: Email address not valid ['']
 ERROR: 2021/04/30 22:45:42 emailconnector.go:55: Email address not valid ['']
+ERROR: 2021/05/01 10:05:39 emailconnector.go:55: Email address not valid ['']
+ERROR: 2021/05/01 10:05:40 emailconnector.go:55: Email address not valid ['']
+ERROR: 2021/05/01 10:16:40 emailconnector.go:73: Error sending email 535 5.7.8 Username and Password not accepted. Learn more at
+5.7.8  https://support.google.com/mail/?p=BadCredentials n4sm2639078ilm.39 - gsmtp
+ERROR: 2021/05/01 10:16:41 emailconnector.go:73: Error sending email 535 5.7.8 Username and Password not accepted. Learn more at
+5.7.8  https://support.google.com/mail/?p=BadCredentials h17sm2516019ilh.55 - gsmtp
+ERROR: 2021/05/01 13:12:40 emailconnector.go:73: Error sending email 535 5.7.8 Username and Password not accepted. Learn more at
+5.7.8  https://support.google.com/mail/?p=BadCredentials 12sm2787244ill.72 - gsmtp
+ERROR: 2021/05/01 13:12:40 emailconnector.go:73: Error sending email 535 5.7.8 Username and Password not accepted. Learn more at
+5.7.8  https://support.google.com/mail/?p=BadCredentials h8sm2735877ils.35 - gsmtp
+ERROR: 2021/05/01 13:19:13 emailconnector.go:55: Email address not valid ['']
+ERROR: 2021/05/01 13:19:13 emailconnector.go:55: Email address not valid ['']
+ERROR: 2021/05/01 13:19:13 emailconnector.go:55: Email address not valid ['']
+ERROR: 2021/05/01 13:19:13 emailconnector.go:55: Email address not valid ['']
+ERROR: 2021/05/01 13:19:13 emailconnector.go:73: Error sending email 535 5.7.8 Username and Password not accepted. Learn more at
+5.7.8  https://support.google.com/mail/?p=BadCredentials i13sm122523ilu.59 - gsmtp
+ERROR: 2021/05/01 13:19:14 emailconnector.go:73: Error sending email 535 5.7.8 Username and Password not accepted. Learn more at
+5.7.8  https://support.google.com/mail/?p=BadCredentials m8sm2789257ilc.13 - gsmtp
+ERROR: 2021/05/01 13:19:14 emailconnector.go:73: Error sending email 535 5.7.8 Username and Password not accepted. Learn more at
+5.7.8  https://support.google.com/mail/?p=BadCredentials d4sm2822218ilg.65 - gsmtp
+ERROR: 2021/05/01 13:19:14 emailconnector.go:73: Error sending email 535 5.7.8 Username and Password not accepted. Learn more at
+5.7.8  https://support.google.com/mail/?p=BadCredentials f4sm2158598ilj.21 - gsmtp
+ERROR: 2021/05/01 13:27:07 emailconnector.go:55: Email address not valid ['']
+ERROR: 2021/05/01 13:27:07 emailconnector.go:55: Email address not valid ['']
+ERROR: 2021/05/01 13:27:07 emailconnector.go:55: Email address not valid ['']
+ERROR: 2021/05/01 13:27:07 emailconnector.go:55: Email address not valid ['']

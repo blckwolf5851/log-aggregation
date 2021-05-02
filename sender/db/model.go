@@ -15,7 +15,7 @@ type Event struct {
 	UnmappedData map[string]string `json:"unmappedData"`
 	EventType    string            `json:"eventType"`
 	Description  string            `json:"description"`
-	DateCreated  time.Time         `json:"dateCreated,omitempty"`
+	DateCreated  time.Time         `json:"timestamp,omitempty"`
 }
 
 // Message struct

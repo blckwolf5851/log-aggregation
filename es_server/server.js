@@ -5,7 +5,7 @@ const path = require('path');
 require("dotenv").config();
 
 
-const { ApiElasticSearchClient, checkConnection, getAllIndices } = require('./server.elastic');
+const { ApiElasticSearchClient, checkConnection, getAllIndices, AddDoc } = require('./server.elastic');
 const app = express();
 
 // PORT
@@ -37,6 +37,7 @@ function start() {
     // Define the `/search` route that should return elastic search results
     app.get('/all-indices', getAllIndices);
     app.get('/search', ApiElasticSearchClient);
+    app.post('/add', AddDoc);
 
     app.listen(PORT, function () {
         console.log(`Express server listening on port :${PORT}`);

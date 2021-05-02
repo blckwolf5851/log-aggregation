@@ -69,7 +69,9 @@ func NewConsumerGroup(broker string, topics []string, group string, handler Cons
 	ctx := context.Background()
 	cfg := sarama.NewConfig()
 	cfg.Version = sarama.V0_10_2_0
-	cfg.Consumer.Offsets.Initial = sarama.OffsetOldest
+	if config.AppConfiguration.KafkaConfig.KafkaTopicConfig == "earliest" {
+		cfg.Consumer.Offsets.Initial = sarama.OffsetOldest
+	} // otherwise latest message
 	client, err := sarama.NewConsumerGroup([]string{broker}, group, cfg)
 	if err != nil {
 		panic(err)

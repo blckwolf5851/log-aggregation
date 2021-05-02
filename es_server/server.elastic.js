@@ -5,7 +5,6 @@ const client = require('./server.client');
 
 function ElasticSearchClient(indices, body, dateRange) {
     // perform the actual search passing in the index, the search query and the type
-
     /*
     dateRange = {
         "timestamp":{
@@ -15,8 +14,6 @@ function ElasticSearchClient(indices, body, dateRange) {
         }
     }
     */
-
-
     var query = []
     size = 50
     for (var i = 0; i < indices.length; i++) {
@@ -49,6 +46,22 @@ function ElasticSearchClient(indices, body, dateRange) {
     // return client.search(query)
 }
 
+function saveBodyToIndex(id, index, body) {
+    client.index({
+        index: index,
+        id: id,
+        body: body
+    }, function (err, resp) {
+        if (err) {
+            console.log("error occured")
+            console.log(err)
+        } else {
+            console.log("Added notification to index", resp)
+        }
+    })
+}
+
+
 function processEsResponse(r) {
     var result = r.body.responses
     result = result.map((hit) => {
@@ -60,6 +73,19 @@ function processEsResponse(r) {
     });
     return values
 }
+
+function AddDoc(req, res){
+    console.log("req")
+    console.log(req.body)
+    var id = req.body.id
+    var index = req.body.index
+    var body = req.body.body
+    // id = JSON.parse(id)
+    // index = JSON.parse(index)
+    // body = JSON.parse(body)
+    saveBodyToIndex(id, index, body)
+}
+
 
 function ApiElasticSearchClient(req, res) {
     // perform the actual search passing in the index, the search query and the type
@@ -121,6 +147,7 @@ module.exports = {
     ApiElasticSearchClient,
     ElasticSearchClient,
     checkConnection,
-    getAllIndices
+    getAllIndices,
+    AddDoc
 };
 

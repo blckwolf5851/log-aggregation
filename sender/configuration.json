@@ -5,7 +5,7 @@
   "kafkaConfig": {
     "bootstrapServers": "localhost:9092",
     "kafkaTopic": "alerts",
-    "kafkaTopicConfig": "earliest",
+    "kafkaTopicConfig": "latest",
     "kafkaGroupId": "notification-service",
     "kafkaTimeout": 50000
   },
