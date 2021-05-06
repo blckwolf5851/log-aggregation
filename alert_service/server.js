@@ -47,7 +47,8 @@ const sample_alert = {
     threshold: 2,
     window: 6485218, // time window size in millisecond
     sendTo: ['154757929sherry@gmail.com'],
-    priority: "HIGH" // LOW, MEDIUM, HIGH
+    priority: "HIGH", // LOW, MEDIUM, HIGH
+    receiveEmail: false
 }
 
 
@@ -220,6 +221,10 @@ consumer.on('message', function (message) {
                         sample_match: JSON.stringify(alerts[query_id].matching_log[0])
                     }
                 }
+
+                if (!alerts[query_id].receiveEmail) {
+                    notif.channel = {}
+                }
                 // add the message to queue, for push to kafka later
                 push_messages.push(JSON.stringify(notif))
 
@@ -245,6 +250,10 @@ consumer.on('message', function (message) {
                             sample_match: JSON.stringify(alerts[query_id].matching_log[0])
                         }
                     }
+                    if (!alerts[query_id].receiveEmail) {
+                        notif.channel = {}
+                    }
+                        
                     push_messages.push(JSON.stringify(notif))
 
                     console.log("Push alert to Kafka: " + JSON.stringify(notif))
