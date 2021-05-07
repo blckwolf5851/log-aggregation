@@ -9,6 +9,8 @@ services:
       - "zookeeper_data:/bitnami"
     environment:
       - ALLOW_ANONYMOUS_LOGIN=yes
+    networks:
+      - kafka
   kafka:
     image: docker.io/bitnami/kafka:2
     ports:
@@ -17,15 +19,25 @@ services:
       - "kafka_data:/bitnami"
     environment:
       # - KAFKA_BROKER_ID=1
-      - KAFKA_LISTENERS=PLAINTEXT://:9092
-      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://127.0.0.1:9092
-      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+
+      # - KAFKA_LISTENERS=PLAINTEXT://:9092
+      # - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://127.0.0.1:9092
+      # - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      # - ALLOW_PLAINTEXT_LISTENER=yes
+
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
       - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_CFG_LISTENERS=CLIENT://:9092,EXTERNAL://:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://kafka:9092,EXTERNAL://localhost:9093
+      - KAFKA_INTER_BROKER_LISTENER_NAME=CLIENT
       # - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
       # - ALLOW_PLAINTEXT_LISTENER=yes
       # - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://127.0.0.1:9092
     depends_on:
       - zookeeper
+    networks:
+      - kafka
   es01:
     image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION}
     container_name: es01
@@ -110,9 +122,9 @@ services:
     networks:
       - elastic
   es_node_api:
-    image: node:14-alpine
+    # image: node:14-alpine
     container_name: es_nodejs
-    build: .
+    build: ./es_server
     ports:
       - 3000:3000
     environment:
@@ -121,8 +133,8 @@ services:
       - NODE_PORT=3000
       - ELASTIC_URL=http://es01:9200
     volumes:
-      - .:/usr/src/app/quotes
-    command: npm run start_es
+      - .:/usr/src/es_service/quotes
+    command: npm run start
     links:
       - es01
       - es02
@@ -133,6 +145,74 @@ services:
       - es03
     networks: 
       - elastic    
+  alert_node_api:
+    # image: node:14-alpine
+    container_name: alert_nodejs
+    build: ./alert_service
+    ports:
+      - 8080:8080
+    environment:
+      - NODE_ENV=local
+      - NODE_PORT=8080
+      - ELASTIC_URL=http://es01:9200
+    volumes:
+      - .:/usr/src/alert_service/quotes
+    command: npm run start
+    depends_on:
+      - kafka
+      - zookeeper
+    networks:
+      - elastic
+      - kafka
+
+  notif_node_api:
+    # image: node:14-alpine
+    container_name: notif_nodejs
+    build: ./notification_service
+    ports:
+      - 8081:8081
+    environment:
+      - NODE_ENV=local
+      - NODE_PORT=8081
+    volumes:
+      - .:/usr/src/notification_service/quotes
+    command: npm run start
+    depends_on:
+      - kafka
+      - zookeeper
+    networks:
+      - kafka
+
+  receiver_api:
+    # image: node:14-alpine
+    container_name: log_receiver
+    build: ./log_receiver
+    ports:
+      - 8082:8082
+    volumes:
+      - .:/usr/src/log_receive_service/quotes
+    # command: go run transport.go
+    depends_on:
+      - kafka
+      - zookeeper
+    networks:
+      - kafka
+
+  notif_sender:
+    # image: node:14-alpine
+    container_name: notif_sender
+    build: ./sender
+    ports:
+      - 8888:8888
+    volumes:
+      - .:/usr/src/notif_sender_service/quotes
+    # command: go run main.go
+    depends_on:
+      - kafka
+      - zookeeper
+    networks:
+      - kafka
+
     
 volumes:
   zookeeper_data:
@@ -149,4 +229,6 @@ volumes:
 
 networks:
   elastic:
+    driver: bridge
+  kafka:
     driver: bridge

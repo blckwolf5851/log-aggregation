@@ -45,12 +45,14 @@ func ProcessEvent(eventForMessage EventForMessage) {
 	} else {
 		for _, msg := range messages {
 			//index message
-			msg.IndexMessage()
+			// msg.IndexMessage() // TODO
 
 			// eventForMessage.SendMessage(msg)
-			response := eventForMessage.SendMessage(msg)
+			eventForMessage.SendMessage(msg) // TODO
+			// response := eventForMessage.SendMessage(msg)
+
 			//index response
-			msg.UpdateResponse(msg.MessageID, response)
+			// msg.UpdateResponse(msg.MessageID, response) // TODO
 
 		}
 	}

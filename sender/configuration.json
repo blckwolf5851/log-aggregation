@@ -3,7 +3,7 @@
   "logFileLocation": "./go_kafka_alert.log",
   "log": true,
   "kafkaConfig": {
-    "bootstrapServers": "localhost:9092",
+    "bootstrapServers": "kafka:9092",
     "kafkaTopic": "alerts",
     "kafkaTopicConfig": "latest",
     "kafkaGroupId": "notification-service",
@@ -16,7 +16,7 @@
   "smsConfig": {
     "twilioAccountId": "Malike",
     "twilioAuthToken": "Malike",
-    "smsSender": "+15005550006"
+    "smsSender": "+16474480588"
   },
   "emailConfig": {
     "smtpServerHost": "smtp.gmail.com",

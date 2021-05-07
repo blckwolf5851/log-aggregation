@@ -10,20 +10,18 @@ import (
 
 	"log-aggregation/sender/service"
 
-	"log-aggregation/sender/db"
-
 	"log-aggregation/sender/config"
 )
 
 var profile = ""
-var configServer = "http://localhost:8888"
+var configServer = "http://0.0.0.0:8888"
 
 func main() {
 
 	logLevel := flag.String("loglevel", "error", "Possible options warn,trace,error,info")
 	name := flag.String("name", "go-kafka-alert", "Application name")
 	profileTerminal := flag.String("profile", "", "Configuration profile URL")
-	configServerTerminal := flag.String("config", "http://localhost:8888", "Config server base url")
+	configServerTerminal := flag.String("config", configServer, "Config server base url")
 	flag.Parse()
 	if profileTerminal != nil {
 		profile = *profileTerminal
@@ -40,7 +38,7 @@ func main() {
 		config.Error.Println("Error loading config. Shutting down ")
 		os.Exit(1)
 	}
-	db.DialDB()
+	// db.DialDB()
 	config.Trace.Println("Starting up Service with Log level '" + *logLevel + "'")
 	config.Trace.Println("Configuration file loaded successfully with '" +
 		strconv.Itoa(len(config.AppConfiguration.Templates)) + "' templates and " +

@@ -2,6 +2,8 @@
 
 # dependencies
 node_modules
+./alert_service/node_modules
+./es_service/node_modules
 
 # testing
 coverage
@@ -24,5 +26,6 @@ yarn-debug.log*
 yarn-error.log*
 
 package-lock.json
-yarn.lock
-node_modules
+./alert_service/package-lock.json
+./es_service/package-lock.json
+

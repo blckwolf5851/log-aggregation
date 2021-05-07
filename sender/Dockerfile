@@ -1,20 +1,16 @@
-FROM golang:1.9-alpine as builder
+FROM golang:1.15.7-buster
 
-ADD https://github.com/golang/dep/releases/download/v0.4.1/dep-linux-amd64 /usr/bin/dep
-RUN apk update && apk upgrade && \
-    apk add --no-cache bash git openssh
-RUN apk add librdkafka-dev build-base
-RUN chmod +x /usr/bin/dep
+WORKDIR /usr/local/go/src/log-aggregation/sender
 
-WORKDIR $GOPATH/src/log-aggregation/sender
-COPY Gopkg.toml Gopkg.lock ./
+COPY go.* ./
+
+RUN go mod tidy
+
 COPY configuration.json ./
-RUN dep ensure --vendor-only
-COPY . ./
-RUN GOOS=linux go build -a -o /go-kafka-alert .
 
-FROM scratch
-COPY --from=builder /go-kafka-alert ./
-COPY --from=builder . ./
-ENTRYPOINT ["./sender"]
-# CMD [ "profile", "config" ]
+COPY . ./
+
+EXPOSE 8888
+EXPOSE 9092
+
+CMD go run main.go

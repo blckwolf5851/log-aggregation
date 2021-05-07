@@ -44,7 +44,7 @@ docker run -it --privileged --pid=host debian nsenter -t 1 -m -u -i sh
 ### Send data to producer
 To send new logs to system on Windows:
 ```
-curl -H "Content-Type: application/json" -X POST http://127.0.0.1:3000/api/v1/logs  -d "{ \"level\":\"info\", \"message\":\"Docker starting...\" }"
+curl -X POST http://127.0.0.1:8082/api/v1/logs -H "Content-type:application/json" -d "{ \"levelname\":\"ERROR\", \"message\":\"Docker starting...\", \"timestamp\":\"2021-05-07T14:48:00.000Z\", \"filename\":\"transport.go\" }"
 ```
 
 To send new logs to system on Linux:

@@ -13,14 +13,32 @@ var kafka = require('kafka-node');
 var Consumer = kafka.Consumer,
     Producer = kafka.Producer,
     // client = new kafka.KafkaClient("localhost:9092"),
-    client = new kafka.KafkaClient({ kafkaHost: 'localhost:9092' }),
+    client = new kafka.KafkaClient({ kafkaHost: 'kafka:9092' }),
+    // client = new kafka.KafkaClient({ kafkaHost: "<KafkaBroker/Zookeeper Public IP of EC2>:9092" }),
     consumer = new Consumer(client, [{ topic: topic, partition: 0 }], { autoCommit: true, groupId: topic }),
     // consumer = new Consumer(client, [{ topic: topic, partition: 0 }], { autoCommit: true, groupId: topic, fromOffset: "earliest"}),
     producer = new Producer(client);
 
+// setup local storage
 var LocalStorage = require('node-localstorage').LocalStorage;
 localStorage = new LocalStorage('./alert_service');
 
+// setup elasticsearch
+const { Client } = require('@elastic/elasticsearch')
+require("dotenv").config();
+
+const elasticUrl = process.env.ELASTIC_URL || "http://localhost:9200";
+
+console.log("Connecting to " + elasticUrl)
+
+/**
+ * *** ElasticSearch *** client
+ * @type {Client}
+ */
+const es_client = new Client({node: elasticUrl})
+
+
+// setup server
 var server = http.createServer(function (request, response) {
     console.log(' Request recieved : ' + request.url);
     response.writeHead(404);
@@ -33,6 +51,7 @@ var server = http.createServer(function (request, response) {
 // TODO subscribe to multiple topic with groupid.
 var stored_alerts = JSON.parse(localStorage.getItem('queries'))
 var alerts = stored_alerts ? stored_alerts : {}
+console.log("Loaded Alerts: " + JSON.stringify(alerts))
 var push_messages = []
 var query_saving_interval = 2
 var kaf_relv_msg_count = 0;
@@ -81,20 +100,35 @@ function saveNotif(notif) {
     // const id = JSON.stringify(notif.eventId + now.getTime())
     // const body = JSON.stringify(notif)
     // console.log('https://localhost:3000/add?index='+index+'&&id='+id+'&&body='+body)
-    axios
-        // .post('https://localhost:3000/add?index='+index+'&&id='+id+'&&body='+body)
-        .post('http://localhost:3000/add', {
-            id: id,
-            index: index,
-            body: body
-        })
-        .then(res => {
-            console.log(`statusCode: ${res.statusCode}`)
-            console.log(res)
-        })
-        .catch(error => {
-            console.error(error)
-        })
+
+    // axios
+    //     // .post('https://localhost:3000/add?index='+index+'&&id='+id+'&&body='+body)
+    //     // also try es_node_api:3000
+    //     .post('http://0.0.0.0:3000/add', {
+    //         id: id,
+    //         index: index,
+    //         body: body
+    //     })
+    //     .then(res => {
+    //         console.log(`statusCode: ${res.statusCode}`)
+    //         console.log(res)
+    //     })
+    //     .catch(error => {
+    //         console.error(error)
+    //     })
+
+    es_client.index({
+        index: index,
+        id: id,
+        body: body
+    }, function (err, resp) {
+        if (err) {
+            console.log("error occured")
+            console.log(err)
+        } else {
+            console.log("Added notification to index", resp)
+        }
+    })
 
 
     // es_client.index({
