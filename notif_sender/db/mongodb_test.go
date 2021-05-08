@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"log-aggregation/sender/config"
+	"log-aggregation/notif_sender/config"
 )
 
 var msg = Message{

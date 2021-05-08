@@ -8,9 +8,9 @@ import (
 	"sync/atomic"
 	"time"
 
-	"log-aggregation/sender/config"
+	"log-aggregation/notif_sender/config"
 
-	"log-aggregation/sender/db"
+	"log-aggregation/notif_sender/db"
 
 	"github.com/Shopify/sarama"
 )

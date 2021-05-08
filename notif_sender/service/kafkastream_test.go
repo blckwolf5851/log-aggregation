@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"log-aggregation/sender/db"
+	"log-aggregation/notif_sender/db"
 )
 
 var fakeStreamEvent = db.Event{

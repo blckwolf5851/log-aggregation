@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"text/template"
 
-	"log-aggregation/sender/config"
-	"log-aggregation/sender/db"
+	"log-aggregation/notif_sender/config"
+	"log-aggregation/notif_sender/db"
 )
 
 //ParseTemplateForMessage : Parses Email/Txt Template

@@ -5,9 +5,9 @@ import (
 	"testing"
 	"time"
 
-	"log-aggregation/sender/db"
+	"log-aggregation/notif_sender/db"
 
-	"log-aggregation/sender/config"
+	"log-aggregation/notif_sender/config"
 )
 
 var fakeRecipient = "233201234567"

@@ -8,9 +8,9 @@ import (
 	"strconv"
 	"syscall"
 
-	"log-aggregation/sender/service"
+	"log-aggregation/notif_sender/service"
 
-	"log-aggregation/sender/config"
+	"log-aggregation/notif_sender/config"
 )
 
 var profile = ""

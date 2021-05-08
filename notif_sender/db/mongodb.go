@@ -3,7 +3,7 @@ package db
 import (
 	"time"
 
-	"log-aggregation/sender/config"
+	"log-aggregation/notif_sender/config"
 
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"

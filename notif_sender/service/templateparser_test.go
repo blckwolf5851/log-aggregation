@@ -3,7 +3,7 @@ package service
 import (
 	"testing"
 
-	"log-aggregation/sender/db"
+	"log-aggregation/notif_sender/db"
 )
 
 var fakeTempEvent = db.Event{

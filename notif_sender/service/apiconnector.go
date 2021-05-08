@@ -3,7 +3,7 @@ package service
 import (
 	"errors"
 
-	"log-aggregation/sender/db"
+	"log-aggregation/notif_sender/db"
 )
 
 // EventForAPI struct

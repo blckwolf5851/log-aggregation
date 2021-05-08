@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"time"
 
-	"log-aggregation/sender/config"
-	"log-aggregation/sender/db"
+	"log-aggregation/notif_sender/config"
+	"log-aggregation/notif_sender/db"
 
 	"github.com/smancke/mailck"
 	"gopkg.in/gomail.v2"

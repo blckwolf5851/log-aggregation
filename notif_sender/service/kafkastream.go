@@ -3,8 +3,8 @@ package service
 import (
 	"strconv"
 
-	"log-aggregation/sender/config"
-	"log-aggregation/sender/db"
+	"log-aggregation/notif_sender/config"
+	"log-aggregation/notif_sender/db"
 )
 
 // EventProcessorForChannel : Event Processor For Channel

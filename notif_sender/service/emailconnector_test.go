@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"log-aggregation/sender/config"
-	"log-aggregation/sender/db"
+	"log-aggregation/notif_sender/config"
+	"log-aggregation/notif_sender/db"
 )
 
 var fakeEmailRecipient = "st.malike@gmail.com"

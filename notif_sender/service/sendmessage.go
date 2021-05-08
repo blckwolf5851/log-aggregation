@@ -3,7 +3,7 @@ package service
 import (
 	"strings"
 
-	"log-aggregation/sender/db"
+	"log-aggregation/notif_sender/db"
 )
 
 //EventForMessage : Interface to be Implemented For Delivery Channels

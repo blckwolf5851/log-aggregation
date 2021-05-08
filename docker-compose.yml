@@ -197,22 +197,37 @@ services:
       - zookeeper
     networks:
       - kafka
-
   notif_sender:
     # image: node:14-alpine
+    image: notif_sender
     container_name: notif_sender
-    build: ./sender
+    build: ./notif_sender
     ports:
       - 8888:8888
     volumes:
-      - .:/usr/src/notif_sender_service/quotes
-    # command: go run main.go
+      - .:/usr/src/notif_sender/quotes
     depends_on:
       - kafka
       - zookeeper
     networks:
       - kafka
-
+  kafka_es_bridge:
+    container_name: kafka_es_bridge
+    build: ./kafka_es_bridge
+    environment:
+      - NODE_ENV=local
+      - ELASTIC_URL=http://es01:9200
+    volumes:
+      - .:/usr/src/kafka_es_bridge/quotes
+    depends_on:
+      - kafka
+      - zookeeper
+      - es01
+      - es02
+      - es03
+    networks:
+      - kafka
+      - elastic
     
 volumes:
   zookeeper_data:

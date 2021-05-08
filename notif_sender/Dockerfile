@@ -1,6 +1,6 @@
 FROM golang:1.15.7-buster
 
-WORKDIR /usr/local/go/src/log-aggregation/sender
+WORKDIR /usr/local/go/src/log-aggregation/notif_sender
 
 COPY go.* ./
 
