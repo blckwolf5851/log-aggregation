@@ -26,8 +26,9 @@ spec:
         io.kompose.service: log-receiver
     spec:
       containers:
-      - image: log_receiver
-        imagePullPolicy: Never
+      - image: gcr.io/log-aggregation-test/log_receiver:v1.0.0
+      # - image: log_receiver
+        imagePullPolicy: ""
         name: log-receiver
         ports:
         - containerPort: 8082

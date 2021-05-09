@@ -32,8 +32,9 @@ spec:
           value: http://es01:9200
         - name: NODE_ENV
           value: local
-        image: kafka_es_bridge
-        imagePullPolicy: Never
+        image: gcr.io/log-aggregation-test/kafka_es_bridge:v1.0.0
+        # image: kafka_es_bridge
+        imagePullPolicy: ""
         name: kafka-es-bridge
         resources: {}
         volumeMounts:

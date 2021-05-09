@@ -35,8 +35,9 @@ spec:
           value: local
         - name: NODE_PORT
           value: "8081"
-        image: notif_websock
-        imagePullPolicy: Never
+        image: gcr.io/log-aggregation-test/notif_websock:v1.0.0
+        # image: notif_websock
+        imagePullPolicy: ""
         name: notif-websock
         ports:
         - containerPort: 8081

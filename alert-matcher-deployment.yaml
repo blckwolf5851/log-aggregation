@@ -38,8 +38,9 @@ spec:
           value: local
         - name: NODE_PORT
           value: "8080"
-        image: alert_matcher
-        imagePullPolicy: Never
+        # image: alert_matcher
+        image: gcr.io/log-aggregation-test/alert_matcher:v1.0.0
+        imagePullPolicy: ""
         name: alert-matcher
         ports:
         - containerPort: 8080

@@ -26,8 +26,9 @@ spec:
         io.kompose.service: notif-sender
     spec:
       containers:
-      - image: notif_sender
-        imagePullPolicy: Never
+      - image: gcr.io/log-aggregation-test/notif_sender:v1.0.0
+      # - image: notif_sender
+        imagePullPolicy: ""
         name: notif-sender
         ports:
         - containerPort: 8888

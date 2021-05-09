@@ -39,8 +39,9 @@ spec:
           value: local
         - name: NODE_PORT
           value: "3000"
-        image: es_api
-        imagePullPolicy: Never
+        image: gcr.io/log-aggregation-test/es_api:v1.0.0
+        # image: es_api
+        imagePullPolicy: ""
         name: es-api
         ports:
         - containerPort: 3000
