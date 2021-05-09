@@ -45,6 +45,7 @@ docker run -it --privileged --pid=host debian nsenter -t 1 -m -u -i sh
 To send new logs to system on Windows:
 ```
 curl -X POST http://127.0.0.1:8082/api/v1/logs -H "Content-type:application/json" -d "{ \"levelname\":\"ERROR\", \"message\":\"Docker starting...\", \"timestamp\":\"2021-05-09T14:48:00.000Z\", \"filename\":\"transport.go\" }"
+curl -X POST http://35.202.240.113:8082/api/v1/logs -H "Content-type:application/json" -d "{ \"levelname\":\"ERROR\", \"message\":\"Docker starting...\", \"timestamp\":\"2021-05-09T14:48:00.000Z\", \"filename\":\"transport.go\" }"
 ```
 
 To send new logs to system on Linux:
@@ -101,6 +102,13 @@ To get logs of a service:
 ```
 kubectl logs pod_id
 ```
+
+Add security context under to avoid permission denied issue
+```
+securityContext:
+f   sGroup: 2000 
+```
+
 
 
 

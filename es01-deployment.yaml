@@ -56,7 +56,7 @@ spec:
         - containerPort: 9200
         resources: {}
         volumeMounts:
-        - mountPath: /usr/share/elasticsearch/data
+        - mountPath: /elasticsearch/data
           name: logaggregation-data01
       restartPolicy: Always
       serviceAccountName: ""

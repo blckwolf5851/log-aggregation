@@ -54,7 +54,7 @@ spec:
         name: es03
         resources: {}
         volumeMounts:
-        - mountPath: /usr/share/elasticsearch/data
+        - mountPath: /elasticsearch/data
           name: logaggregation-data03
       restartPolicy: Always
       serviceAccountName: ""
