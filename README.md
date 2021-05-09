@@ -80,6 +80,31 @@ kubectl get po
 kubectl get svc
 ```
 
+To have public ip for some service, make the spec->type: LoadBalancer
+
+Use `minikube service list` to get list of running public link
+
+If shows the error "Unable to connect to the server: net/http: TLS handshake timeout", then run in windows:
+
+```
+set http_proxy=
+set https_proxy=
+```
+
+Or in linux:
+```
+unset http_proxy
+unset https_proxy
+```
+
+To get logs of a service:
+```
+kubectl logs pod_id
+```
+
+
+
+
 ## Useful Links
 https://github.com/bitnami/bitnami-docker-kafka/blob/master/README.md
 
