@@ -33,7 +33,7 @@ spec:
         - name: NODE_ENV
           value: local
         image: kafka_es_bridge
-        imagePullPolicy: ""
+        imagePullPolicy: Never
         name: kafka-es-bridge
         resources: {}
         volumeMounts:

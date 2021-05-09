@@ -36,7 +36,7 @@ spec:
         - name: NODE_PORT
           value: "8081"
         image: notif_websock
-        imagePullPolicy: ""
+        imagePullPolicy: Never
         name: notif-websock
         ports:
         - containerPort: 8081

@@ -40,7 +40,7 @@ spec:
         - name: NODE_PORT
           value: "3000"
         image: es_api
-        imagePullPolicy: ""
+        imagePullPolicy: Never
         name: es-api
         ports:
         - containerPort: 3000
