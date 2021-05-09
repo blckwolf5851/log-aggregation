@@ -25,6 +25,8 @@ spec:
         io.kompose.network/logaggregation_kafka: "true"
         io.kompose.service: zookeeper
     spec:
+      securityContext:
+        fsGroup: 2000 
       containers:
       - env:
         - name: ALLOW_ANONYMOUS_LOGIN

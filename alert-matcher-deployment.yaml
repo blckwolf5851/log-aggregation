@@ -26,6 +26,8 @@ spec:
         io.kompose.network/logaggregation_kafka: "true"
         io.kompose.service: alert-matcher
     spec:
+      securityContext:
+        fsGroup: 2000 
       containers:
       - args:
         - npm

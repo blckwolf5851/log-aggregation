@@ -25,6 +25,8 @@ spec:
         io.kompose.network/logaggregation_elastic: "true"
         io.kompose.service: es03
     spec:
+      securityContext:
+        fsGroup: 2000 
       containers:
       - env:
         - name: ES_JAVA_OPTS
