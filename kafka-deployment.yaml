@@ -40,7 +40,7 @@ spec:
         - name: KAFKA_INTER_BROKER_LISTENER_NAME
           value: CLIENT
         image: docker.io/bitnami/kafka:2
-        imagePullPolicy: ""
+        imagePullPolicy: """
         name: kafka
         ports:
         - containerPort: 9092

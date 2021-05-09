@@ -27,7 +27,7 @@ spec:
     spec:
       containers:
       - image: log_receiver
-        imagePullPolicy: Never
+        imagePullPolicy: ""
         name: log-receiver
         ports:
         - containerPort: 8082
