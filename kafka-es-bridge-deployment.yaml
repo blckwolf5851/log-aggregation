@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: C:\Program Files\kompose\kompose.exe convert
+    kompose.version: 1.21.0 (992df58d8)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: kafka-es-bridge
+  name: kafka-es-bridge
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: kafka-es-bridge
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: C:\Program Files\kompose\kompose.exe convert
+        kompose.version: 1.21.0 (992df58d8)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/logaggregation_elastic: "true"
+        io.kompose.network/logaggregation_kafka: "true"
+        io.kompose.service: kafka-es-bridge
+    spec:
+      containers:
+      - env:
+        - name: ELASTIC_URL
+          value: http://es01:9200
+        - name: NODE_ENV
+          value: local
+        image: kafka_es_bridge
+        imagePullPolicy: Never
+        name: kafka-es-bridge
+        resources: {}
+        volumeMounts:
+        - mountPath: /usr/src/kafka_es_bridge/quotes
+          name: kafka-es-bridge-claim0
+      restartPolicy: Always
+      serviceAccountName: ""
+      volumes:
+      - name: kafka-es-bridge-claim0
+        persistentVolumeClaim:
+          claimName: kafka-es-bridge-claim0
+status: {}

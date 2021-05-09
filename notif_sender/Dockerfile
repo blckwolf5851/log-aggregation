@@ -11,6 +11,6 @@ COPY configuration.json ./
 COPY . ./
 
 EXPOSE 8888
-EXPOSE 9092
+# EXPOSE 9092
 
 CMD go run main.go

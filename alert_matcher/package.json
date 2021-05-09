@@ -1,19 +1,22 @@
 {
-  "name": "notification_service",
+  "name": "alert_matcher",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "pm2-runtime start server.js --name notif_node_backend",
-    "stop": "pm2-runtime stop notif_node_backend"
+    "start": "pm2-runtime start server.js --name alert_node_backend",
+    "stop": "pm2-runtime stop alert_node_backend"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "http": "0.0.1-security",
+    "@elastic/elasticsearch": "^7.12.0",
+    "axios": "^0.21.1",
+    "dotenv": "^9.0.0",
     "kafka-node": "^5.0.0",
+    "node-localstorage": "^2.1.6",
     "websocket": "^1.0.34"
   }
 }

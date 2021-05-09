@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: C:\Program Files\kompose\kompose.exe convert
+    kompose.version: 1.21.0 (992df58d8)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: notif-websock
+  name: notif-websock
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: notif-websock
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: C:\Program Files\kompose\kompose.exe convert
+        kompose.version: 1.21.0 (992df58d8)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/logaggregation_kafka: "true"
+        io.kompose.service: notif-websock
+    spec:
+      containers:
+      - args:
+        - npm
+        - run
+        - start
+        env:
+        - name: NODE_ENV
+          value: local
+        - name: NODE_PORT
+          value: "8081"
+        image: notif_websock
+        imagePullPolicy: Never
+        name: notif-websock
+        ports:
+        - containerPort: 8081
+        resources: {}
+        volumeMounts:
+        - mountPath: /usr/src/notif_websock/quotes
+          name: notif-websock-claim0
+      restartPolicy: Always
+      serviceAccountName: ""
+      volumes:
+      - name: notif-websock-claim0
+        persistentVolumeClaim:
+          claimName: notif-websock-claim0
+status: {}

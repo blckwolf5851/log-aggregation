@@ -1,0 +1,14 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  creationTimestamp: null
+  name: logaggregation-elastic
+spec:
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          io.kompose.network/logaggregation_elastic: "true"
+  podSelector:
+    matchLabels:
+      io.kompose.network/logaggregation_elastic: "true"

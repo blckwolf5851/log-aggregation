@@ -1,10 +1,10 @@
 FROM node:14-alpine
 
-WORKDIR /usr/src/es_service
+WORKDIR /usr/src/es_api
 
 COPY package*.json ./
 
-RUN npm install
+RUN npm install --only=production
 RUN npm install -g pm2
 
 COPY . ./

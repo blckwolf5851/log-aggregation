@@ -54,7 +54,34 @@ curl --location --request POST '127.0.0.1:3000/api/v1/comments'
 --data-raw '{ "level":"info", "message":"Docker starting..." }'
 ```
 
+### Kubernetes deployment
+```
+kompose convert
+```
+
+Change "imagePullPolicy" option in deployment.yaml to correspond to "Never" when the container doesn't rely on pulling image from docker hub.
+
+Change "apiVersion" option in networkpolicy.yaml to "networking.k8s.io/v1".
+
+Change "creationTimestamp" in persistentvolumeclaim.yaml to "2021-05-08T10:09:47Z" (can be any specific time)
+
+Change "_" to "-" in metadata->name under networkpolicy
+
+Then run the following to create pods
+
+```
+kubectl apply -f .
+```
+
+To check the pod status and service, run the following
+
+```
+kubectl get po
+kubectl get svc
+```
+
 ## Useful Links
 https://github.com/bitnami/bitnami-docker-kafka/blob/master/README.md
 
 https://pkg.go.dev/github.com/shopify/sarama
+

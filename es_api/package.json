@@ -1,22 +1,21 @@
 {
-  "name": "alert_service",
+  "name": "es_api",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "pm2-runtime start server.js --name alert_node_backend",
-    "stop": "pm2-runtime stop alert_node_backend"
+    "start": "pm2-runtime start server.js --name es_node_backend",
+    "stop": "pm2-runtime stop es_node_backend"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@elastic/elasticsearch": "^7.12.0",
-    "axios": "^0.21.1",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
     "dotenv": "^9.0.0",
-    "kafka-node": "^5.0.0",
-    "node-localstorage": "^2.1.6",
-    "websocket": "^1.0.34"
+    "express": "^4.17.1"
   }
 }

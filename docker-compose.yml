@@ -121,10 +121,10 @@ services:
     #   - ./docker_config/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
     networks:
       - elastic
-  es_node_api:
-    # image: node:14-alpine
-    container_name: es_nodejs
-    build: ./es_server
+  es_api:
+    image: es_api
+    container_name: es_api
+    build: ./es_api
     ports:
       - 3000:3000
     environment:
@@ -133,7 +133,7 @@ services:
       - NODE_PORT=3000
       - ELASTIC_URL=http://es01:9200
     volumes:
-      - .:/usr/src/es_service/quotes
+      - .:/usr/src/es_api/quotes
     command: npm run start
     links:
       - es01
@@ -145,10 +145,10 @@ services:
       - es03
     networks: 
       - elastic    
-  alert_node_api:
-    # image: node:14-alpine
-    container_name: alert_nodejs
-    build: ./alert_service
+  alert_matcher:
+    image: alert_matcher
+    container_name: alert_matcher
+    build: ./alert_matcher
     ports:
       - 8080:8080
     environment:
@@ -156,7 +156,7 @@ services:
       - NODE_PORT=8080
       - ELASTIC_URL=http://es01:9200
     volumes:
-      - .:/usr/src/alert_service/quotes
+      - .:/usr/src/alert_matcher/quotes
     command: npm run start
     depends_on:
       - kafka
@@ -164,41 +164,37 @@ services:
     networks:
       - elastic
       - kafka
-
-  notif_node_api:
-    # image: node:14-alpine
-    container_name: notif_nodejs
-    build: ./notification_service
+  notif_websock:
+    image: notif_websock
+    container_name: notif_websock
+    build: ./notif_websock
     ports:
       - 8081:8081
     environment:
       - NODE_ENV=local
       - NODE_PORT=8081
     volumes:
-      - .:/usr/src/notification_service/quotes
+      - .:/usr/src/notif_websock/quotes
     command: npm run start
     depends_on:
       - kafka
       - zookeeper
     networks:
       - kafka
-
-  receiver_api:
-    # image: node:14-alpine
+  log_receiver:
+    image: log_receiver
     container_name: log_receiver
     build: ./log_receiver
     ports:
       - 8082:8082
     volumes:
-      - .:/usr/src/log_receive_service/quotes
-    # command: go run transport.go
+      - .:/usr/src/log_receiver/quotes
     depends_on:
       - kafka
       - zookeeper
     networks:
       - kafka
   notif_sender:
-    # image: node:14-alpine
     image: notif_sender
     container_name: notif_sender
     build: ./notif_sender
@@ -212,6 +208,7 @@ services:
     networks:
       - kafka
   kafka_es_bridge:
+    image: kafka_es_bridge
     container_name: kafka_es_bridge
     build: ./kafka_es_bridge
     environment:
