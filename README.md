@@ -10,6 +10,11 @@ The user(s) insert lines in their code to log data into this service, then the a
 4. React
 5. NodeJS
 6. Websocket
+7. Kubernetes & Docker
+
+## Concepts
+1. Event Driven Architectures
+2. Microservices
 
 ## Setup
 
