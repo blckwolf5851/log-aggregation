@@ -1,5 +1,16 @@
 # Log Aggregation
 
+## CUJ
+The user(s) insert lines in their code to log data into this service, then the admin/developer will be able to see all the logs generated through a dashboard in real time. They will be able to perform search and aggregation functionality on the UI. Moreover, the admin/developer will be able to set alerts (eg. #error > threshold within x minutes) and receive real time notifications on the website.
+
+## Techstack
+1. Kafka (similar to cloud pubsub)
+2. Elasticsearch
+3. Kibana
+4. React
+5. NodeJS
+6. Websocket
+
 ## Setup
 
 ### Docker Setup
